@@ -8,37 +8,55 @@ if (!isset($_SESSION['donor_id'])) {
     exit();
 }
 
-$id_donor = $_SESSION['donor_id'];
+// Get the listing ID from the URL
+if (isset($_GET['id'])) {
+    $listing_id = $_GET['id'];
 
-// Fetch reservations for the donor's listings
-$reservations_sql = "
-    SELECT r.id_reserve, r._date, r.pickup_time, r.STATUS, l.description, re.nom AS recipient_name
-    FROM reservation r
-    JOIN listing l ON r.id_list = l.id_list
-    JOIN recipient re ON r.id_rec = re.id_rec
-    WHERE l.id_donor = ?
-";
+    // Fetch the listing to ensure it belongs to the logged-in donor
+    $sql = "SELECT * FROM listing WHERE id_list = ? AND id_donor = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ii", $listing_id, $_SESSION['donor_id']);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-$reservations_stmt = $conn->prepare($reservations_sql);
-$reservations_stmt->bind_param("i", $id_donor);
-$reservations_stmt->execute();
-$reservations_result = $reservations_stmt->get_result();
+    // Check if the listing exists and belongs to the donor
+    if ($result->num_rows > 0) {
+        $listing = $result->fetch_assoc();
+    } else {
+        echo "Vous n'êtes pas autorisé à modifier cette annonce.";
+        exit();
+    }
+} else {
+    echo "ID de l'annonce non valide.";
+    exit();
+}
 
-// Handle reservation status update
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id_reserve'], $_POST['new_status'])) {
-    $id_reserve = intval($_POST['id_reserve']);
-    $new_status = $_POST['new_status'];
+// Handle form submission to update the listing
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $type = $_POST['type'];
+    $description = $_POST['description'];
+    $quantité = $_POST['quantité'];
+    $date_expire = $_POST['date_expire'];
+    $status = $_POST['status'];
 
-    $update_sql = "UPDATE reservation SET STATUS = ? WHERE id_reserve = ?";
+    // Update the listing with the new values
+    $update_sql = "UPDATE listing SET type = ?, description = ?, quantité = ?, date_expire = ?, STATUS = ? WHERE id_list = ? AND id_donor = ?";
     $update_stmt = $conn->prepare($update_sql);
-    $update_stmt->bind_param("si", $new_status, $id_reserve);
-
+    $update_stmt->bind_param("ssissii", $type, $description, $quantité, $date_expire, $status, $listing_id, $_SESSION['donor_id']);
+    
     if ($update_stmt->execute()) {
-        echo "Statut mis à jour avec succès!";
-        header("Refresh:0"); // Reload page to reflect changes
+        // Also update the related reservations with the new status (if needed)
+        // Update the status of all related reservations based on the listing's new status
+        $update_reservation_status_sql = "UPDATE reservation SET STATUS = ? WHERE id_list = ?";
+        $update_reservation_stmt = $conn->prepare($update_reservation_status_sql);
+        $update_reservation_stmt->bind_param("si", $status, $listing_id);
+        $update_reservation_stmt->execute();
+
+        echo "Annonce et réservations mises à jour avec succès!";
+        header("Location: donor_profile.php"); // Redirect to the donor profile page after successful update
         exit();
     } else {
-        echo "Erreur lors de la mise à jour du statut.";
+        echo "Erreur lors de la mise à jour de l'annonce.";
     }
 }
 ?>
@@ -48,47 +66,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id_reserve'], $_POST['
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gérer les Réservations</title>
+    <title>Modifier Annonce</title>
     <link rel="stylesheet" href="../static/css/main.css">
 </head>
 <body>
-    <h2>Gérer les Réservations</h2>
+    <h2>Modifier Annonce</h2>
 
-    <?php if ($reservations_result->num_rows > 0) { ?>
-        <table border="1">
-            <tr>
-                <th>Annonce</th>
-                <th>Bénéficiaire</th>
-                <th>Date de réservation</th>
-                <th>Heure de retrait</th>
-                <th>Statut</th>
-                <th>Action</th>
-            </tr>
-            <?php while ($reservation = $reservations_result->fetch_assoc()) { ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($reservation['description']); ?></td>
-                    <td><?php echo htmlspecialchars($reservation['recipient_name']); ?></td>
-                    <td><?php echo htmlspecialchars($reservation['_date']); ?></td>
-                    <td><?php echo htmlspecialchars($reservation['pickup_time']); ?></td>
-                    <td><?php echo htmlspecialchars($reservation['STATUS']); ?></td>
-                    <td>
-                        <form method="POST">
-                            <input type="hidden" name="id_reserve" value="<?php echo $reservation['id_reserve']; ?>">
-                            <select name="new_status">
-                                <option value="Pending" <?php if ($reservation['STATUS'] == 'Pending') echo 'selected'; ?>>Pending</option>
-                                <option value="Validated" <?php if ($reservation['STATUS'] == 'Validated') echo 'selected'; ?>>Validated</option>
-                                <option value="Completed" <?php if ($reservation['STATUS'] == 'Completed') echo 'selected'; ?>>Completed</option>
-                                <option value="Cancelled" <?php if ($reservation['STATUS'] == 'Cancelled') echo 'selected'; ?>>Cancelled</option>
-                            </select>
-                            <button type="submit">Mettre à jour</button>
-                        </form>
-                    </td>
-                </tr>
-            <?php } ?>
-        </table>
-    <?php } else {
-        echo "<p>Aucune réservation trouvée.</p>";
-    } ?>
+    <form action="edit_listing.php?id=<?php echo $listing_id; ?>" method="POST">
+        <label for="type">Type</label><br>
+        <input type="text" name="type" id="type" value="<?php echo htmlspecialchars($listing['type']); ?>" required><br><br>
+
+        <label for="description">Description</label><br>
+        <textarea name="description" id="description" required><?php echo htmlspecialchars($listing['description']); ?></textarea><br><br>
+
+        <label for="quantité">Quantité</label><br>
+        <input type="number" name="quantité" id="quantité" value="<?php echo htmlspecialchars($listing['quantité']); ?>" required><br><br>
+
+        <label for="date_expire">Date d'expiration</label><br>
+        <input type="date" name="date_expire" id="date_expire" value="<?php echo htmlspecialchars($listing['date_expire']); ?>" required><br><br>
+
+        <label for="status">Statut</label><br>
+        <select name="status" id="status" required>
+            <option value="Pending" <?php if ($listing['STATUS'] == 'Pending') echo 'selected'; ?>>Pending</option>
+            <option value="Validated" <?php if ($listing['STATUS'] == 'Validated') echo 'selected'; ?>>Validated</option>
+            <option value="Completed" <?php if ($listing['STATUS'] == 'Completed') echo 'selected'; ?>>Completed</option>
+            <option value="Cancelled" <?php if ($listing['STATUS'] == 'Cancelled') echo 'selected'; ?>>Cancelled</option>
+            <option value="Available" <?php if ($listing['STATUS'] == 'Available') echo 'selected'; ?>>Available</option>
+        </select><br><br>
+
+        <button type="submit">Mettre à jour</button>
+    </form>
 
     <br>
     <a href="donor_profile.php">Retour au profil</a>
