@@ -53,18 +53,21 @@ $listings_result = $listings_stmt->get_result();
         </div>
     </div>
 
-    <div class="login-container">
-        <h2> Bienvenue <?php echo htmlspecialchars($donor['nom']); ?></h2>
-        <?php if (isset($error)) echo "<p class='error'>$error</p>"; ?>
-        <div class="donor-details">
-            <p><strong>Votre Établissement :</strong> <?php echo htmlspecialchars($donor['nom_etablissement']); ?></p>
-            <p><strong>Votre adresse mail : </strong><?php echo htmlspecialchars($donor['mail']); ?></p>
-            <p><strong>Votre numéro téléphone :</strong> <?php echo htmlspecialchars($donor['telephone']); ?></p>
-        </div>
-        <h3>Vos Annonces</h3>
-    <a href="create_listing.php">
-        <button>Créer une nouvelle annonce</button>
-    </a>
+    <div class="donateur-container">
+    <h2> Bienvenue <?php echo htmlspecialchars($donor['nom']); ?></h2>
+    <?php if (isset($error)) echo "<p class='error'>$error</p>"; ?>
+    <div class="donor-details">
+        <p><strong>Votre Établissement :</strong> <?php echo htmlspecialchars($donor['nom_etablissement']); ?></p>
+        <p><strong>Votre adresse mail : </strong><?php echo htmlspecialchars($donor['mail']); ?></p>
+        <p><strong>Votre numéro téléphone :</strong> <?php echo htmlspecialchars($donor['telephone']); ?></p>
+    </div>
+    <h2>Vos Annonces</h2>
+
+    <div class="ajout-listing">
+        <a href="create_listing.php">
+            <button>Ajout Annonce</button>
+        </a>
+    </div>
 
     <table border="1">
         <tr>
@@ -99,9 +102,9 @@ $listings_result = $listings_stmt->get_result();
             </tr>
         <?php } ?>
     </table>
-    <br>
-    <a href="logout.php"><button type="submit">Se déconnecter</button></a>
-    </div>
+    <a href="logout.php"><button type="submit">Se Deconnecter</button></a>
+</div>
+
 
     
 </body>

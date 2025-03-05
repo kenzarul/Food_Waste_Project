@@ -20,6 +20,9 @@ if ($result->num_rows > 0) {
     }
 }
 
+$successMessage = '';
+$errorMessage = '';
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $type = $_POST['type'];
     $description = $_POST['description'];
@@ -58,9 +61,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $peut_avoir_stmt->execute();
         }
 
-        echo "Annonce créée avec succès!";
+        $successMessage = "Annonce créée avec succès!";
     } else {
-        echo "Erreur lors de la création de l'annonce: " . $conn->error;
+        $errorMessage = "Erreur lors de la création de l'annonce: " . $conn->error;
     }
 }
 ?>
@@ -74,49 +77,75 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link rel="stylesheet" href="../static/css/main.css">
 </head>
 <body>
-    <h2>Créer une Annonce</h2>
-    <form method="POST">
-        <label for="type">Type:</label>
-        <select name="type" required>
-            <option value="Alimentaire">Alimentaire</option>
-            <option value="Non-Alimentaire">Non-Alimentaire</option>
-        </select>
-        <br>
-
-        <label for="description">Description:</label>
-        <textarea name="description" required></textarea>
-        <br>
-
-        <label for="quantite">Quantité:</label>
-        <input type="number" id="quantite" name="quantite" min="1" required>
-        <br>
-
-        <label for="date_expire">Date d'expiration:</label>
-        <input type="date" name="date_expire" required>
-        <br>
-
-        <label for="category">Catégorie:</label>
-        <select name="category" id="category" onchange="toggleNewCategory()">
-            <option value="" disabled selected>Choisissez une catégorie</option>
-            <?php foreach ($categories as $category) { ?>
-                <option value="<?php echo $category['id_categorie']; ?>">
-                    <?php echo htmlspecialchars($category['nom']); ?>
-                </option>
-            <?php } ?>
-            <option value="new">Ajouter une nouvelle catégorie</option>
-        </select>
-        <br>
-
-        <div id="new_category_div" style="display: none;">
-            <label for="new_category">Nouvelle catégorie:</label>
-            <input type="text" id="new_category" name="new_category">
-            <br>
+<?php
+    // Include the same animation as register.php
+    $foodImages = ["chicken1.png", "steak.png", "salad.png", "noodle.png"];
+    ?>
+    <div class="food-container">
+        <div class="food-container-inner">
+            <?php for ($i = 0; $i < 27; $i++): ?>
+                <div class="food-image" style="background-image: url('../static/img/<?php echo $foodImages[array_rand($foodImages)]; ?>');"></div>
+            <?php endfor; ?>
         </div>
+    </div>
 
-        <button type="submit">Créer l'Annonce</button>
-    </form>
-    <br>
-    <a href="donor_profile.php">Retour au profil</a>
+    <div class="annonce-container">
+        <h2>Créer une Annonce</h2>
+
+                    <!-- Success or Error Message -->
+            <?php if ($successMessage): ?>
+                <div class="success"><?php echo $successMessage; ?></div>
+            <?php elseif ($errorMessage): ?>
+                <div class="error"><?php echo $errorMessage; ?></div>
+            <?php endif; ?>
+
+        <form method="POST">
+            <div class="form-group">
+                <label for="type">Type:</label>
+                <select name="type" required>
+                    <option value="Alimentaire">Alimentaire</option>
+                    <option value="Non-Alimentaire">Non-Alimentaire</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea name="description" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="quantite">Quantité:</label>
+                <input type="number" id="quantite" name="quantite" min="1" required>
+            </div>
+
+            <div class="form-group">
+                <label for="date_expire">Date d'expiration:</label>
+                <input type="date" name="date_expire" required>
+            </div>
+
+            <div class="form-group">
+                <label for="category">Catégorie:</label>
+                <select name="category" id="category" onchange="toggleNewCategory()">
+                    <option value="" disabled selected>Choisissez une catégorie</option>
+                    <?php foreach ($categories as $category) { ?>
+                        <option value="<?php echo $category['id_categorie']; ?>">
+                            <?php echo htmlspecialchars($category['nom']); ?>
+                        </option>
+                    <?php } ?>
+                    <option value="new">Ajouter une nouvelle catégorie</option>
+                </select>
+            </div>
+
+            <div id="new_category_div" style="display: none;">
+                <label for="new_category">Nouvelle catégorie:</label>
+                <input type="text" id="new_category" name="new_category">
+            </div>
+
+            <button type="submit">Créer l'Annonce</button>
+        </form>
+
+        <a href="donor_profile.php"><button type="submit">Retour au profil</button></a>
+    </div>
 
     <script>
         function toggleNewCategory() {

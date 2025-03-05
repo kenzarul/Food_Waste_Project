@@ -70,34 +70,57 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link rel="stylesheet" href="../static/css/main.css">
 </head>
 <body>
-    <h2>Modifier Annonce</h2>
+<?php
+    // Include the same animation as register.php
+    $foodImages = ["chicken1.png", "steak.png", "salad.png", "noodle.png"];
+    ?>
+    <div class="food-container">
+        <div class="food-container-inner">
+            <?php for ($i = 0; $i < 27; $i++): ?>
+                <div class="food-image" style="background-image: url('../static/img/<?php echo $foodImages[array_rand($foodImages)]; ?>');"></div>
+            <?php endfor; ?>
+        </div>
+    </div>
 
-    <form action="edit_listing.php?id=<?php echo $listing_id; ?>" method="POST">
-        <label for="type">Type</label><br>
-        <input type="text" name="type" id="type" value="<?php echo htmlspecialchars($listing['type']); ?>" required><br><br>
+    <div class="annonce-container">
+        <h2>Modifier Annonce</h2>
+        <?php if (isset($error)) echo "<p class='error'>$error</p>"; ?>
+        <form action="edit_listing.php?id=<?php echo $listing_id; ?>" method="POST">
+            <div class="form-group">
+                <label for="type">Type :</label>
+                <input type="text" name="type" id="type" value="<?php echo htmlspecialchars($listing['type']); ?>" required><br><br>
+            </div>
 
-        <label for="description">Description</label><br>
-        <textarea name="description" id="description" required><?php echo htmlspecialchars($listing['description']); ?></textarea><br><br>
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea name="description" id="description" required><?php echo htmlspecialchars($listing['description']); ?></textarea><br><br>
+            </div>
 
-        <label for="quantité">Quantité</label><br>
-        <input type="number" name="quantité" id="quantité" value="<?php echo htmlspecialchars($listing['quantité']); ?>" required><br><br>
+            <div class="form-group">
+                <label for="quantite">Quantité:</label>
+                <input type="number" name="quantité" id="quantité" value="<?php echo htmlspecialchars($listing['quantité']); ?>" required><br><br>
+            </div>
 
-        <label for="date_expire">Date d'expiration</label><br>
-        <input type="date" name="date_expire" id="date_expire" value="<?php echo htmlspecialchars($listing['date_expire']); ?>" required><br><br>
+            <div class="form-group">
+                <label for="date_expire">Date d'expiration:</label>
+                <input type="date" name="date_expire" id="date_expire" value="<?php echo htmlspecialchars($listing['date_expire']); ?>" required><br><br>
+            </div>
 
-        <label for="status">Statut</label><br>
-        <select name="status" id="status" required>
-            <option value="Pending" <?php if ($listing['STATUS'] == 'Pending') echo 'selected'; ?>>Pending</option>
-            <option value="Validated" <?php if ($listing['STATUS'] == 'Validated') echo 'selected'; ?>>Validated</option>
-            <option value="Completed" <?php if ($listing['STATUS'] == 'Completed') echo 'selected'; ?>>Completed</option>
-            <option value="Cancelled" <?php if ($listing['STATUS'] == 'Cancelled') echo 'selected'; ?>>Cancelled</option>
-            <option value="Available" <?php if ($listing['STATUS'] == 'Available') echo 'selected'; ?>>Available</option>
-        </select><br><br>
+            <div class="form-group">
+                <label for="status">Statut:</label>
+                <select name="status" id="status" required>
+                <option value="Pending" <?php if ($listing['STATUS'] == 'Pending') echo 'selected'; ?>>Pending</option>
+                <option value="Validated" <?php if ($listing['STATUS'] == 'Validated') echo 'selected'; ?>>Validated</option>
+                <option value="Completed" <?php if ($listing['STATUS'] == 'Completed') echo 'selected'; ?>>Completed</option>
+                <option value="Cancelled" <?php if ($listing['STATUS'] == 'Cancelled') echo 'selected'; ?>>Cancelled</option>
+                <option value="Available" <?php if ($listing['STATUS'] == 'Available') echo 'selected'; ?>>Available</option>
+            </select><br><br>
+            </div>
 
-        <button type="submit">Mettre à jour</button>
-    </form>
+            <button type="submit">Mettre à jour</button>
+        </form>
+        <a href="donor_profile.php"><button type="submit">Retour au profil</button></a>
+    </div>
 
-    <br>
-    <a href="donor_profile.php">Retour au profil</a>
 </body>
 </html>
