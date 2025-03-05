@@ -2,7 +2,7 @@
 session_start();
 include 'db_connect.php';
 
-// Ensure the user is logged in as a recipient
+// Ensuire the user is logged in as a recipient 
 if (!isset($_SESSION['recipient_id'])) {
     header("Location: login.php");
     exit();
@@ -56,8 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title>Réserver une Annonce</title>
     <link rel="stylesheet" href="../static/css/main.css">
 </head>
-<body>
-    <h2>Réserver une Annonce</h2>
+<body>     <h2>Réserver une Annonce</h2> 
     <form method="POST">
         <label>Heure de retrait :</label>
         <input type="time" name="pickup_time" required>
