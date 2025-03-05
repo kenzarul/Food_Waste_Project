@@ -49,6 +49,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
 
+<?php
+    // Include the same animation as register.php
+    $foodImages = ["chicken1.png", "steak.png", "salad.png", "noodle.png"];
+    ?>
+    <div class="food-container">
+        <div class="food-container-inner">
+            <?php for ($i = 0; $i < 27; $i++): ?>
+                <div class="food-image" style="background-image: url('../static/img/<?php echo $foodImages[array_rand($foodImages)]; ?>');"></div>
+            <?php endfor; ?>
+        </div>
+    </div>
+
     <div class="register-container">
         <h2>Créer un compte</h2>
         <?php if (isset($error)) echo "<p class='error'>$error</p>"; ?>

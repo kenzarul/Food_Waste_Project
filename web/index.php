@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion</title>
-    <link rel="stylesheet" href="static/css/main.css">
+    <link rel="stylesheet" href="../static/css/main.css">
 </head>
 <body>
 
@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <div class="food-container">
         <div class="food-container-inner">
             <?php for ($i = 0; $i < 27; $i++): ?>
-                <div class="food-image" style="background-image: url('static/img/<?php echo $foodImages[array_rand($foodImages)]; ?>');"></div>
+                <div class="food-image" style="background-image: url('../static/img/<?php echo $foodImages[array_rand($foodImages)]; ?>');"></div>
             <?php endfor; ?>
         </div>
     </div>

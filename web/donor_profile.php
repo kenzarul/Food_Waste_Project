@@ -35,17 +35,30 @@ $listings_result = $listings_stmt->get_result();
     <link rel="stylesheet" href="../static/css/main.css">
 </head>
 <body>
-    <h2>Profil Donateur</h2>
-    <p><strong>Nom:</strong> <?php echo htmlspecialchars($donor['nom']); ?></p>
-    <p><strong>Établissement:</strong> <?php echo htmlspecialchars($donor['nom_etablissement']); ?></p>
-    <p><strong>Email:</strong> <?php echo htmlspecialchars($donor['mail']); ?></p>
-    <p><strong>Téléphone:</strong> <?php echo htmlspecialchars($donor['telephone']); ?></p>
+<?php
+    // Include the same animation as register.php
+    $foodImages = ["chicken1.png", "steak.png", "salad.png", "noodle.png"];
+    ?>
+    <div class="food-container">
+        <div class="food-container-inner">
+            <?php for ($i = 0; $i < 27; $i++): ?>
+                <div class="food-image" style="background-image: url('../static/img/<?php echo $foodImages[array_rand($foodImages)]; ?>');"></div>
+            <?php endfor; ?>
+        </div>
+    </div>
 
-    <h3>Vos Annonces</h3>
+    <div class="login-container">
+        <h2> Bienvenue <?php echo htmlspecialchars($donor['nom']); ?></h2>
+        <?php if (isset($error)) echo "<p class='error'>$error</p>"; ?>
+        <div class="donor-details">
+            <p><strong>Votre Établissement :</strong> <?php echo htmlspecialchars($donor['nom_etablissement']); ?></p>
+            <p><strong>Votre adresse mail : </strong><?php echo htmlspecialchars($donor['mail']); ?></p>
+            <p><strong>Votre numéro téléphone :</strong> <?php echo htmlspecialchars($donor['telephone']); ?></p>
+        </div>
+        <h3>Vos Annonces</h3>
     <a href="create_listing.php">
         <button>Créer une nouvelle annonce</button>
     </a>
-    <br><br>
 
     <table border="1">
         <tr>
@@ -70,8 +83,10 @@ $listings_result = $listings_stmt->get_result();
             </tr>
         <?php } ?>
     </table>
-
     <br>
-    <a href="logout.php">Se déconnecter</a>
+    <a href="logout.php"><button type="submit">Se déconnecter</button></a>
+    </div>
+
+    
 </body>
 </html>

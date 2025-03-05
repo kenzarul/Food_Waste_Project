@@ -12,6 +12,7 @@ html, body {
     display: flex;
     justify-content: center;
     align-items: center;
+    
 }
 
 .login-container {
@@ -27,10 +28,25 @@ html, body {
     align-items: center;
 }
 
-h2 {
+h2, h3 {
     margin-bottom: 20px;
     color: #333;
 }
+
+p {
+    margin-bottom: 20px;
+}
+
+.donor-details {
+    text-align: left; /* Align the donor details text to the left */
+    margin-bottom: 20px;
+}
+
+/* Add margins to paragraphs inside donor-details */
+.donor-details p {
+    margin-bottom: 10px;
+}
+
 
 input, select, button {
     width: 100%;
@@ -38,9 +54,11 @@ input, select, button {
     margin: 8px 0;
     border: 1px solid #ccc;
     border-radius: 5px;
+
 }
 
 button {
+    margin-top: 10px;
     background-color: #28a745;
     color: white;
     border: none;
@@ -144,4 +162,45 @@ button:hover {
     color: #218838;
     text-decoration: underline;
 }
+
+table {
+    width: 100%; /* Make table take full width */
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #fff;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: center;
+}
+
+th {
+    background-color: #28a745;
+    color: white;
+    font-size: 16px;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+tr:hover {
+    background-color: #ddd;
+}
+
+/* Links inside table */
+td a {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+}
+
+td a:hover {
+    text-decoration: underline;
+    color: #0056b3;
+}
+
+
 

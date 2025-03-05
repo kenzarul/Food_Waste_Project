@@ -24,19 +24,30 @@ $recipient = $result->fetch_assoc();
 <head>
     <meta charset="UTF-8">
     <title>Profil du Bénéficiaire</title>
+    <link rel="stylesheet" href="../static/css/main.css">
 </head>
-<body>
-    <h2>Profil du Bénéficiaire</h2>
-    <p>Nom: <?php echo htmlspecialchars($recipient['nom']); ?></p>
-    <p>Email: <?php echo htmlspecialchars($recipient['mail']); ?></p>
-    <p>Téléphone: <?php echo htmlspecialchars($recipient['telephone']); ?></p>
 
-    <!-- Buttons for actions -->
-    <a href="food_listing.php">
-        <button>Voir les annonces</button>
-    </a>
-    <a href="reservation_history.php">
-        <button>Voir l'historique des réservations</button>
-    </a>
+<body>
+<?php
+    // Include the same animation as register.php
+    $foodImages = ["chicken1.png", "steak.png", "salad.png", "noodle.png"];
+    ?>
+    <div class="food-container">
+        <div class="food-container-inner">
+            <?php for ($i = 0; $i < 27; $i++): ?>
+                <div class="food-image" style="background-image: url('../static/img/<?php echo $foodImages[array_rand($foodImages)]; ?>');"></div>
+            <?php endfor; ?>
+        </div>
+    </div>
+
+    <div class="login-container">
+        <h2> Bienvenue <?php echo htmlspecialchars($recipient['nom']); ?></h2>
+        <?php if (isset($error)) echo "<p class='error'>$error</p>"; ?>
+        <p><strong>Votre adresse mail </strong>: <?php echo htmlspecialchars($recipient['mail']); ?></p>
+        <p><strong>Votre numéro téléphone : </strong><?php echo htmlspecialchars($recipient['telephone']); ?></p>
+        <a href="food_listing.php"><button type="submit">Voir les annonces</button></a>
+        <a href="reservation_history.php"><button type="submit">Voir l'historique des réservations</button></a>
+    </div>
+    
 </body>
 </html>
