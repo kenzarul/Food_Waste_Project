@@ -2,7 +2,7 @@
 session_start();
 include 'db_connect.php';
 
-// Ensure the user is logged in as a recipient
+// Ensure the user is logged in as a recipient 
 if (!isset($_SESSION['recipient_id'])) {
     header("Location: login.php");
     exit();
@@ -41,6 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $update_stmt->execute();
 
         echo "Réservation réussie !";
+        echo "<br><a href='recipient_profile.php'><button>Retour au profil</button></a>"; // Button to go back to profile
         exit();
     } else {
         echo "Erreur lors de la réservation.";

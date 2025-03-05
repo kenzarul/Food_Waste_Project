@@ -18,8 +18,14 @@ $stmt->execute();
 $result = $stmt->get_result();
 $donor = $result->fetch_assoc();
 
-// Fetch donor's listings
-$listings_sql = "SELECT * FROM listing WHERE id_donor = ?";
+// Fetch donor's listings along with recipient names (if any reservation exists)
+$listings_sql = "
+    SELECT l.id_list, l.type, l.description, l.quantité, l.date_expire, l.STATUS, r.nom AS recipient_name
+    FROM listing l
+    LEFT JOIN reservation res ON l.id_list = res.id_list
+    LEFT JOIN recipient r ON res.id_rec = r.id_rec
+    WHERE l.id_donor = ?
+";
 $listings_stmt = $conn->prepare($listings_sql);
 $listings_stmt->bind_param("i", $id_donor);
 $listings_stmt->execute();
@@ -67,6 +73,7 @@ $listings_result = $listings_stmt->get_result();
             <th>Quantité</th>
             <th>Date d'expiration</th>
             <th>Statut</th>
+            <th>Nom du Bénéficiaire</th> <!-- Added this column -->
             <th>Actions</th>
         </tr>
         <?php while ($row = $listings_result->fetch_assoc()) { ?>
@@ -76,6 +83,15 @@ $listings_result = $listings_stmt->get_result();
                 <td><?php echo htmlspecialchars($row['quantité']); ?></td>
                 <td><?php echo htmlspecialchars($row['date_expire']); ?></td>
                 <td><?php echo htmlspecialchars($row['STATUS']); ?></td>
+                <td>
+                    <?php 
+                        if ($row['recipient_name']) {
+                            echo htmlspecialchars($row['recipient_name']);
+                        } else {
+                            echo "Aucun bénéficiaire";
+                        }
+                    ?>
+                </td>
                 <td>
                     <a href="edit_listing.php?id=<?php echo $row['id_list']; ?>">Modifier</a> |
                     <a href="delete_listing.php?id=<?php echo $row['id_list']; ?>" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette annonce ?');">Supprimer</a>
