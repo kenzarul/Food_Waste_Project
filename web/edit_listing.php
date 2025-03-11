@@ -45,15 +45,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $update_stmt->bind_param("ssissii", $type, $description, $quantité, $date_expire, $status, $listing_id, $_SESSION['donor_id']);
     
     if ($update_stmt->execute()) {
-        // Also update the related reservations with the new status (if needed)
-        // Update the status of all related reservations based on the listing's new status
+        // Update the status of all related reservations
         $update_reservation_status_sql = "UPDATE reservation SET STATUS = ? WHERE id_list = ?";
         $update_reservation_stmt = $conn->prepare($update_reservation_status_sql);
         $update_reservation_stmt->bind_param("si", $status, $listing_id);
         $update_reservation_stmt->execute();
 
-        echo "Annonce et réservations mises à jour avec succès!";
-        header("Location: donor_profile.php"); // Redirect to the donor profile page after successful update
+        header("Location: donor_profile.php"); // Redirect after successful update
         exit();
     } else {
         echo "Erreur lors de la mise à jour de l'annonce.";
@@ -70,25 +68,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link rel="stylesheet" href="../static/css/main.css">
 </head>
 <body>
-<?php
-    // Include the same animation as register.php
-    $foodImages = ["chicken1.png", "steak.png", "salad.png", "noodle.png"];
-    ?>
-    <div class="food-container">
-        <div class="food-container-inner">
-            <?php for ($i = 0; $i < 27; $i++): ?>
-                <div class="food-image" style="background-image: url('../static/img/<?php echo $foodImages[array_rand($foodImages)]; ?>');"></div>
-            <?php endfor; ?>
-        </div>
-    </div>
-
     <div class="annonce-container">
         <h2>Modifier Annonce</h2>
-        <?php if (isset($error)) echo "<p class='error'>$error</p>"; ?>
         <form action="edit_listing.php?id=<?php echo $listing_id; ?>" method="POST">
             <div class="form-group">
                 <label for="type">Type :</label>
-                <input type="text" name="type" id="type" value="<?php echo htmlspecialchars($listing['type']); ?>" required><br><br>
+                <select name="type" id="type" required>
+                    <option value="Alimentaire" <?php if ($listing['type'] == 'Alimentaire') echo 'selected'; ?>>Alimentaire</option>
+                    <option value="Non-alimentaire" <?php if ($listing['type'] == 'Non-alimentaire') echo 'selected'; ?>>Non-alimentaire</option>
+                </select><br><br>
             </div>
 
             <div class="form-group">
@@ -109,18 +97,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div class="form-group">
                 <label for="status">Statut:</label>
                 <select name="status" id="status" required>
-                <option value="Pending" <?php if ($listing['STATUS'] == 'Pending') echo 'selected'; ?>>Pending</option>
-                <option value="Validated" <?php if ($listing['STATUS'] == 'Validated') echo 'selected'; ?>>Validated</option>
-                <option value="Completed" <?php if ($listing['STATUS'] == 'Completed') echo 'selected'; ?>>Completed</option>
-                <option value="Cancelled" <?php if ($listing['STATUS'] == 'Cancelled') echo 'selected'; ?>>Cancelled</option>
-                <option value="Available" <?php if ($listing['STATUS'] == 'Available') echo 'selected'; ?>>Available</option>
-            </select><br><br>
+                    <option value="Pending" <?php if ($listing['STATUS'] == 'Pending') echo 'selected'; ?>>Pending</option>
+                    <option value="Validated" <?php if ($listing['STATUS'] == 'Validated') echo 'selected'; ?>>Validated</option>
+                    <option value="Completed" <?php if ($listing['STATUS'] == 'Completed') echo 'selected'; ?>>Completed</option>
+                    <option value="Cancelled" <?php if ($listing['STATUS'] == 'Cancelled') echo 'selected'; ?>>Cancelled</option>
+                    <option value="Available" <?php if ($listing['STATUS'] == 'Available') echo 'selected'; ?>>Available</option>
+                </select><br><br>
             </div>
 
             <button type="submit">Mettre à jour</button>
         </form>
         <a href="donor_profile.php"><button type="submit">Retour au profil</button></a>
     </div>
-
 </body>
 </html>
