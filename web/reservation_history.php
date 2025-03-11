@@ -26,10 +26,25 @@ $reservations_result = $reservations_stmt->get_result();
 <head>
     <meta charset="UTF-8">
     <title>Historique des Réservations</title>
+    <link rel="stylesheet" href="../static/css/main.css">
 </head>
 <body>
-    <h2>Historique des Réservations</h2>
-    
+<?php
+    // Include the same animation as register.php
+    $foodImages = ["chicken1.png", "steak.png", "salad.png", "noodle.png"];
+    ?>
+    <div class="food-container">
+        <div class="food-container-inner">
+            <?php for ($i = 0; $i < 27; $i++): ?>
+                <div class="food-image" style="background-image: url('../static/img/<?php echo $foodImages[array_rand($foodImages)]; ?>');"></div>
+            <?php endfor; ?>
+        </div>
+    </div>
+
+    <div class="donateur-container">
+    <h2> Historique des Réservations</h2>
+    <?php if (isset($error)) echo "<p class='error'>$error</p>"; ?>
+
     <?php if ($reservations_result->num_rows > 0) { ?>
         <table border="1">
             <tr>
@@ -54,8 +69,10 @@ $reservations_result = $reservations_stmt->get_result();
     <?php } ?>
 
     <br>
-    <a href="recipient_profile.php">
-        <button>Retour au profil</button>
-    </a>
+    <a href="recipient_profile.php"><button type="submit">Retour au profil</button></a>
+
+</div>
+    
+
 </body>
 </html>

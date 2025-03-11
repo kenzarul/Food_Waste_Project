@@ -10,6 +10,8 @@ if (!isset($_SESSION['recipient_id'])) {
 
 $id_rec = $_SESSION['recipient_id'];
 $id_list = isset($_GET['id']) ? intval($_GET['id']) : 0;
+$message = ""; // Variable to store messages
+$listing_available = false;
 
 // Check if the listing exists and is available
 $check_sql = "SELECT * FROM listing WHERE id_list = ? AND STATUS = 'Available'";
@@ -18,13 +20,12 @@ $check_stmt->bind_param("i", $id_list);
 $check_stmt->execute();
 $listing_result = $check_stmt->get_result();
 
-if ($listing_result->num_rows == 0) {
-    echo "Cette annonce n'est plus disponible.";
-    exit();
+if ($listing_result->num_rows > 0) {
+    $listing_available = true;
 }
 
-// Insert reservation
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+// Insert reservation if form is submitted
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $listing_available) {
     $pickup_time = $conn->real_escape_string($_POST['pickup_time']);
     $date = date('Y-m-d'); // Current date
 
@@ -40,11 +41,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $update_stmt->bind_param("i", $id_list);
         $update_stmt->execute();
 
-        echo "Réservation réussie !";
-        echo "<br><a href='recipient_profile.php'><button>Retour au profil</button></a>"; // Button to go back to profile
-        exit();
+        $message = "✅ Réservation réussie !";
+        $listing_available = false; // Now the listing is reserved, so we don't show the form
     } else {
-        echo "Erreur lors de la réservation.";
+        $message = "❌ Erreur lors de la réservation.";
     }
 }
 ?>
@@ -58,14 +58,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link rel="stylesheet" href="../static/css/main.css">
 </head>
 <body>
-    <h2>Réserver une Annonce</h2>
-    <form method="POST">
-        <label>Heure de retrait :</label>
-        <input type="time" name="pickup_time" required>
-        <button type="submit">Réserver</button>
-    </form>
+    <?php
+    // Include the same animation as register.php
+    $foodImages = ["chicken1.png", "steak.png", "salad.png", "noodle.png"];
+    ?>
+    <div class="food-container">
+        <div class="food-container-inner">
+            <?php for ($i = 0; $i < 27; $i++): ?>
+                <div class="food-image" style="background-image: url('../static/img/<?php echo $foodImages[array_rand($foodImages)]; ?>');"></div>
+            <?php endfor; ?>
+        </div>
+    </div>
 
-    <br>
-    <a href="food_listing.php">Retour aux annonces</a>
+    <div class="login-container">
+        <h2>Réserver une Annonce</h2>
+
+        <?php if (!empty($message)): ?>
+            <p class="message"><?php echo $message; ?></p>
+        <?php elseif (!$listing_available): ?>
+            <p class="error-message">❌ Cette annonce n'est plus disponible.</p>
+        <?php endif; ?>
+
+        <?php if ($listing_available): ?>
+            <form method="POST">
+                <label>Heure de retrait :</label>
+                <input type="time" name="pickup_time" required>
+                <button type="submit">Réserver</button>
+            </form>
+        <?php endif; ?>
+
+        <a href="recipient_profile.php"><button type="button">Retour au profil</button></a>
+    </div>
 </body>
 </html>

@@ -47,6 +47,8 @@ $recipient = $result->fetch_assoc();
         <p><strong>Votre numéro téléphone : </strong><?php echo htmlspecialchars($recipient['telephone']); ?></p>
         <a href="food_listing.php"><button type="submit">Voir les annonces</button></a>
         <a href="reservation_history.php"><button type="submit">Voir l'historique des réservations</button></a>
+        <a href="logout.php"><button type="submit">Se Deconnecter</button></a>
+
     </div>
     
 </body>
