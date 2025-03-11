@@ -49,7 +49,7 @@ $foodImages = ["chicken1.png", "steak.png", "salad.png", "noodle.png"];
     <div class="food-container">
         <div class="food-container-inner">
             <?php for ($i = 0; $i < 27; $i++): ?>
-                <div class="food-image" style="background-image: url('../static/img/<?php echo $foodImages[array_rand($foodImages)]; ?>');"></div>
+                <div class="food-image" style="background-image: url('../static/img/<?php echo htmlspecialchars($foodImages[array_rand($foodImages)]); ?>');"></div>
             <?php endfor; ?>
         </div>
     </div>
@@ -57,9 +57,12 @@ $foodImages = ["chicken1.png", "steak.png", "salad.png", "noodle.png"];
     <div class="donateur-container">
         <h2>Bienvenue <?php echo htmlspecialchars($donor['nom']); ?></h2>
         <div class="donor-details">
-            <p><strong>Établissement :</strong> <?php echo htmlspecialchars($donor['nom_etablissement']); ?></p>
             <p><strong>Email :</strong> <?php echo htmlspecialchars($donor['mail']); ?></p>
             <p><strong>Téléphone :</strong> <?php echo htmlspecialchars($donor['telephone']); ?></p>
+            
+            <?php if (!empty($donor['nom_etablissement'])): ?>
+                <p><strong>Établissement :</strong> <?php echo htmlspecialchars($donor['nom_etablissement']); ?></p>
+            <?php endif; ?>
         </div>
 
         <h2>Vos Annonces</h2>
@@ -81,7 +84,7 @@ $foodImages = ["chicken1.png", "steak.png", "salad.png", "noodle.png"];
                 <th>Feedback</th>
                 <th>Actions</th>
             </tr>
-            <?php while ($row = $listings_result->fetch_assoc()) { ?>
+            <?php while ($row = $listings_result->fetch_assoc()): ?>
                 <tr>
                     <td><?php echo htmlspecialchars($row['type']); ?></td>
                     <td><?php echo htmlspecialchars($row['description']); ?></td>
@@ -90,14 +93,23 @@ $foodImages = ["chicken1.png", "steak.png", "salad.png", "noodle.png"];
                     <td><?php echo htmlspecialchars($row['STATUS']); ?></td>
                     <td><?php echo $row['recipient_name'] ? htmlspecialchars($row['recipient_name']) : "Aucun bénéficiaire"; ?></td>
                     <td><?php echo $row['pickup_time'] ? htmlspecialchars($row['pickup_time']) : "Non défini"; ?></td>
-                    <td><?php echo ($row['rating'] !== null && $row['commentaire'] !== null) ? "Note: " . htmlspecialchars($row['rating']) . "<br>Commentaire: " . htmlspecialchars($row['commentaire']) : "Pas de feedback"; ?></td>
+                    <td>
+                        <?php 
+                            if ($row['rating'] !== null && $row['commentaire'] !== null) {
+                                echo "Note: " . htmlspecialchars($row['rating']) . "<br>Commentaire: " . htmlspecialchars($row['commentaire']);
+                            } else {
+                                echo "Pas de feedback";
+                            }
+                        ?>
+                    </td>
                     <td>
                         <a href="edit_listing.php?id=<?php echo $row['id_list']; ?>">Modifier</a> |
                         <a href="delete_listing.php?id=<?php echo $row['id_list']; ?>" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette annonce ?');">Supprimer</a>
                     </td>
                 </tr>
-            <?php } ?>
+            <?php endwhile; ?>
         </table>
+        
         <a href="logout.php"><button type="submit">Se Déconnecter</button></a>
     </div>
 </body>
