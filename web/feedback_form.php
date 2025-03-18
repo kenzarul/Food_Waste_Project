@@ -14,7 +14,7 @@ $message = ""; // Variable to store messages
 $form_disabled = false; // Variable to control form disable status
 
 // Check if the reservation exists for the recipient
-$check_sql = "SELECT * FROM reservation WHERE id_reserve = ? AND id_rec = ?";
+$check_sql = "SELECT * FROM donor_reservations WHERE id_reserve = ? AND id_rec = ?";
 $check_stmt = $conn->prepare($check_sql);
 $check_stmt->bind_param("ii", $id_reserve, $id_rec);
 $check_stmt->execute();

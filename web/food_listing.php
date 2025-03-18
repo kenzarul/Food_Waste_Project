@@ -41,8 +41,8 @@ if (!$result) {
 
 // Fetch unique types and donors for filtering
 $types_result = $conn->query("SELECT DISTINCT type FROM listing");
-$donors_result = $conn->query("SELECT DISTINCT COALESCE(e.nom, CONCAT(d.nom, ' ', d.prenom)) AS donor_display 
-                               FROM donateurs d 
+$donors_result = $conn->query("SELECT DISTINCT COALESCE(e.nom, CONCAT(d.donor_name)) AS donor_display 
+                               FROM recipient_view d 
                                LEFT JOIN etablissement e ON d.id_donor = e.id_donor");
 ?>
 

@@ -10,7 +10,7 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 $id_donor = intval($_GET['id']);
 
 // Fetch donor details
-$donor_sql = "SELECT * FROM donateurs WHERE id_donor = ?";
+$donor_sql = "SELECT * FROM recipient_view WHERE id_donor = ?";
 $donor_stmt = $conn->prepare($donor_sql);
 $donor_stmt->bind_param("i", $id_donor);
 $donor_stmt->execute();
@@ -66,7 +66,6 @@ $feedback_result = $feedback_stmt->get_result();
         echo "<p><strong>Nom de l'Établissement:</strong> " . htmlspecialchars($donor['nom_etablissement']) . "</p>";
         echo "<p><strong>Email:</strong> " . htmlspecialchars($donor['mail']) . "</p>";
         echo "<p><strong>Téléphone:</strong> " . htmlspecialchars($donor['telephone']) . "</p>";
-        echo "<p><strong>Adresse de l'Établissement:</strong> " . htmlspecialchars($donor['address']) . "</p>";
     } else {
         echo "<p><strong>Donateur:</strong> Individuel</p>";
         echo "<p><strong>Email:</strong> " . htmlspecialchars($donor['mail']) . "</p>";

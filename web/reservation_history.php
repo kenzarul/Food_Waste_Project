@@ -13,7 +13,7 @@ $id_rec = $_SESSION['recipient_id'];
 // Fetch past reservations with donor name
 $reservations_sql = "SELECT r.id_reserve, l.type, l.description, r._date, r.pickup_time, r.STATUS, 
                             d.id_donor, COALESCE(e.nom, CONCAT(d.nom, ' ', d.prenom)) AS donateur_nom
-                     FROM reservation r 
+                     FROM donor_reservations r 
                      JOIN listing l ON r.id_list = l.id_list 
                      JOIN donateurs d ON l.id_donor = d.id_donor
                      LEFT JOIN etablissement e ON d.id_donor = e.id_donor
@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['rating'], $_POST['comm
     $commentaire = $conn->real_escape_string($_POST['commentaire']);
 
     // Check if the reservation exists for the recipient
-    $check_sql = "SELECT * FROM reservation WHERE id_reserve = ? AND id_rec = ?";
+    $check_sql = "SELECT * FROM donor_reservations WHERE id_reserve = ? AND id_rec = ?";
     $check_stmt = $conn->prepare($check_sql);
     $check_stmt->bind_param("ii", $id_reserve, $id_rec);
     $check_stmt->execute();

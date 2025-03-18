@@ -1,6 +1,6 @@
 <?php
 session_start();
-$conn = new mysqli('localhost', 'root', '', 'food_saving');
+$conn = new mysqli('localhost', 'root', '', 'food_listing');
 
 if ($conn->connect_error) {
     die('Connection failed: ' . $conn->connect_error);
@@ -10,20 +10,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nom = $conn->real_escape_string($_POST['nom']);
     $prenom = isset($_POST['prenom']) ? $conn->real_escape_string($_POST['prenom']) : null;
     $mail = $conn->real_escape_string($_POST['mail']);
-    $password = $conn->real_escape_string($_POST['password']); // No hashing
+    $password = $conn->real_escape_string($_POST['password']); // Use hashed password
     $telephone = $conn->real_escape_string($_POST['telephone']);
     $role = $conn->real_escape_string($_POST['role']);
     $address = isset($_POST['address']) ? $conn->real_escape_string($_POST['address']) : null;
     $donor_type = isset($_POST['donor_type']) ? $_POST['donor_type'] : null;
 
     if ($role === 'donateurs') {
-        $query = "INSERT INTO donateurs (nom, prenom, mail, telephone, mot_de_passe, address) VALUES (?, ?, ?, ?, ?, ?)";
+        // Insert donor data
+        $query = "INSERT INTO donateurs (nom, prenom, mail, telephone, mot_de_passe, adresse) VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($query);
         $stmt->bind_param("ssssss", $nom, $prenom, $mail, $telephone, $password, $address);
         
         if ($stmt->execute()) {
             $donor_id = $conn->insert_id;
 
+            // If donor type is "establishment", insert establishment info
             if ($donor_type === 'establishment') {
                 $nom_etablissement = $conn->real_escape_string($_POST['nom_etablissement']);
                 $etablissement_telephone = $conn->real_escape_string($_POST['etablissement_telephone']);
@@ -41,6 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error = "Erreur lors de l'inscription: " . $stmt->error;
         }
     } elseif ($role === 'recipient') {
+        // Insert recipient data
         $query = "INSERT INTO recipient (nom, mail, mot_de_passe, telephone) VALUES (?, ?, ?, ?)";
         $stmt = $conn->prepare($query);
         $stmt->bind_param("ssss", $nom, $mail, $password, $telephone);
@@ -50,6 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="fr">

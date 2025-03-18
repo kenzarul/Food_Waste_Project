@@ -1,6 +1,6 @@
 <?php
 session_start();
-$conn = new mysqli('localhost', 'root', '', 'food_saving');
+$conn = new mysqli('localhost', 'root', '', 'food_listing');
 
 if ($conn->connect_error) {
     die('Connection failed: ' . $conn->connect_error);
@@ -45,6 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="fr">

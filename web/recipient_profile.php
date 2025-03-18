@@ -3,8 +3,9 @@ session_start();
 include 'db_connect.php';
 
 // Ensure the user is logged in as a recipient
-if (!isset($_SESSION['recipient_id'])) {
-    header("Location: login.php");
+if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'recipient') {
+    // Redirect to the login page if the user is not logged in or doesn't have the 'recipient' role
+    header('Location: index.php');
     exit();
 }
 

@@ -11,7 +11,7 @@ if (!isset($_SESSION['donor_id'])) {
 $id_donor = $_SESSION['donor_id'];
 
 // Fetch donor details
-$sql = "SELECT * FROM donateurs WHERE id_donor = ?";
+$sql = "SELECT * FROM recipient_view WHERE id_donor = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $id_donor);
 $stmt->execute();
@@ -55,7 +55,7 @@ $foodImages = ["chicken1.png", "steak.png", "salad.png", "noodle.png"];
     </div>
 
     <div class="donateur-container">
-        <h2>Bienvenue <?php echo htmlspecialchars($donor['nom']); ?></h2>
+        <h2>Bienvenue <?php echo htmlspecialchars($donor['donor_name']); ?></h2>
         <div class="donor-details">
             <p><strong>Email :</strong> <?php echo htmlspecialchars($donor['mail']); ?></p>
             <p><strong>Téléphone :</strong> <?php echo htmlspecialchars($donor['telephone']); ?></p>
